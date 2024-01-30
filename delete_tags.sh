@@ -1,40 +1,39 @@
 #!/bin/bash
 
-
-# Überprüfe, ob sich das Skript in einem Git-Repository befindet
+# Check if the script is in a Git repository
 if [ ! -d ".git" ]; then
-  echo "Fehler: Dieses Skript muss in einem Git-Repository ausgeführt werden."
+  echo "Error: This script must be executed in a Git repository."
   exit 1
 fi
 
 prefix="test-"
 
-# Finde Tags mit dem angegebenen Präfix
+# Find tags with the specified prefix
 tagsToDelete=$(git tag -l "$prefix*")
 
-# Überprüfe, ob Tags gefunden wurden
+# Check if tags were found
 if [ -z "$tagsToDelete" ]; then
-  echo "Keine passenden Tags gefunden."
+  echo "No matching tags found."
   exit 1
 fi
 
-# Zeige die zu löschenden Tags an
-echo "Folgende Tags werden gelöscht:"
+# Display the tags to be deleted
+echo "The following tags will be deleted:"
 for tag in $tagsToDelete; do
     echo $tag
 done
 
-# Frage nach Bestätigung
-read -p "Möchten Sie diese Tags wirklich löschen? (y/n): " confirm
+# Ask for confirmation
+read -p "Do you really want to delete these tags? (y/n): " confirm
 
 if [ "$confirm" == "y" ]; then
-    # Iteriere über die gefundenen Tags und lösche sie
+    # Iterate over the found tags and delete them
     for tag in $tagsToDelete; do
         git tag -d $tag
         git push origin :refs/tags/$tag
-        echo "Tag $tag wurde gelöscht."
+        echo "Tag $tag has been deleted."
     done
-    echo "Alle ausgewählten Tags wurden gelöscht."
+    echo "All selected tags have been deleted."
 else
-    echo "Löschvorgang abgebrochen. Keine Tags wurden gelöscht."
+    echo "Deletion operation canceled. No tags were deleted."
 fi
